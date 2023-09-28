@@ -43,8 +43,8 @@ class Predictor(BasePredictor):
 
     def predict(
         self,
-        audio: Optional[Path] = Input(description="Audio file"),
-        audio_url: Optional[str] = Input(description="Audio URL"),
+        audio: Path = Input(description="Audio file", default=None),
+        audio_url: str = Input(description="Audio URL", default=None),
         model: str = Input(
             default="base",
             choices=["tiny", "base", "small", "medium", "large-v1", "large-v2"],
@@ -130,14 +130,14 @@ class Predictor(BasePredictor):
             "append_punctuations": append_punctuations,
         }
         if audio_url is not None:
-            with tempfile.NamedTemporaryFile(delete=True) as temp_file:
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
                 filename = temp_file.name
-                http_message, _ = urllib.request.urlretrieve(audio_url, filename)
-                if http_message.status == 200:
-                    raise Exception("Failed to download audio file")
-                result = model.transcribe(filename, temperature=temperature, **args)
-        else:
-            result = model.transcribe(str(audio), temperature=temperature, **args)
+                urllib.request.urlretrieve(audio_url, filename)
+                audio = filename
+        #         result = model.transcribe(filename, temperature=temperature, **args)
+        # else:
+        #     result = model.transcribe(str(audio), temperature=temperature, **args)
+        result = model.transcribe(str(audio), temperature=temperature, **args)
 
         return ModelOutput(
             segments=result["segments"],
