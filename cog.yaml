@@ -1,20 +1,23 @@
+image: 'r8.im/collectiveai-team/whisper-wordtimestamps'
+
 build:
   gpu: true
-  python_version: "3.8"
-  cuda: "11.7.1"
+  python_version: "3.9"
+  cuda: "12.1.1"
 
   python_packages:
-    - ffmpeg-python
-    - tqdm==4.64.0
-    - numpy==1.22.3
-    - transformers==4.19.2
+    - tqdm==4.66.1
+    - numpy==1.26.2
+    - transformers==4.35.2
     - ffmpeg-python==0.2.0
-    - more_itertools==8.14.0
+    - more_itertools==10.1.0
   system_packages:
     - "ffmpeg"
     - "libsndfile1"
   run:
-    - pip install torch==1.13.1+cu117 torchaudio==0.13.1+cu117 -f https://download.pytorch.org/whl/cu117/torch_stable.html
-    - pip install git+https://github.com/openai/whisper
+    - pip install torch==2.1.0 torchaudio
+    # - pip install git+https://github.com/openai/whisper@v20231117
+    # - pip install setuptools-rust 
+    - pip install openai-whisper==20231117
 
 predict: "predict.py:Predictor"
